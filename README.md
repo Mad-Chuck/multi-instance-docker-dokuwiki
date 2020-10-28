@@ -4,5 +4,5 @@ Multi-instance webservice that allows users to create their own instances of Dok
 ## Directory structure
 - /core_engines - folder with dokuwiki core files, plugins and templates. Each directory inside this folder should be listed in dokuwiki versions.
 
-- /user_data - folder with user configuration files of their dokuwiki instance.
+- /wikis_data - folder with user configuration files of their dokuwiki instance.
 
