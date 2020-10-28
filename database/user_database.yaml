@@ -1,0 +1,15 @@
+# registered users database simulation file
+
+users:
+  - email: dokuwiki1@niepodam.pl
+    password: dokuwiki1
+    wikis:
+      - id: dokuwiki1
+        engine: engine1
+      - id: dokuwiki3
+        engine: engine1
+  - email: dokuwiki2@niepodam.pl
+    password: dokuwiki2
+    wikis:
+      - id: dokuwiki2
+        engine: engine1
