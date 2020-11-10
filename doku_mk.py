@@ -1,10 +1,8 @@
 import argparse
 import yaml
 import logging
+from distutils.dir_util import copy_tree
 
-
-# ------------------------------------------------- CONSTS -------------------------------------------------------------
-DEFAULT_ENGINE = 'engine1'
 
 # ---------------------------------------- ADDITIONAL FUNCTIONS --------------------------------------------------------
 def create_logger(name):
@@ -25,6 +23,7 @@ def create_logger(name):
     logger.addHandler(ch)
     return logger
 
+
 # ----------------------------------------------- MAIN BODY ------------------------------------------------------------
 def dokuwiki_create(params):
     """
@@ -32,9 +31,25 @@ def dokuwiki_create(params):
     use default engine, if other engine check if it exist
 
     :param params:
+
     :return:
     """
     log = create_logger('dokuwiki_create')
+    doku_name = params.name
+    version = params.engine
+
+    # Read engine version
+    if version is None:
+        try:
+            with open('./core_engines/default_version.yml', 'r') as version_file:
+                version = yaml.safe_load(version_file)['version']
+            version_file.close()
+        except FileNotFoundError as e:
+            log.error('"./core_engines/default_version.yml" not found. FileNotFoundError: {0}'.format(e))
+            raise
+        except KeyError as e:
+            log.error('Version not found. KeyError: {0}'.format(e))
+            raise
 
     # Read docker compose
     try:
@@ -55,32 +70,36 @@ def dokuwiki_create(params):
         raise
 
     # Check is service name free to use
-    if params.name in services_names:
+    if doku_name in services_names:
         log.error('Service with given name is already created. '
                   'Change service name or use doku_update.py to modify given service')
         raise
 
     # define new service
-    services[params.name] = {}
-    services[params.name]['image'] = 'bitnami/dokuwiki'
-    services[params.name]['container_name'] = 'simple-service'
+    services[doku_name] = {}
+    services[doku_name]['image'] = 'bitnami/dokuwiki'
+    services[doku_name]['container_name'] = doku_name
 
     # add labels
     labels = [
         "traefik.enable=true",
-        "traefik.http.routers.{0}.rule=Host(`{0}.localhost)".format(params.name),
-        "traefik.http.routers.{0}.entrypoints=web".format(params.name),
+        "traefik.http.routers.{0}.rule=Host(`{0}.localhost)".format(doku_name),
+        "traefik.http.routers.{0}.entrypoints=web".format(doku_name),
     ]
-    services[params.name]['labels'] = labels
+    services[doku_name]['labels'] = labels
 
-    # todo: create/copy default wikis data and add to volumes
+    # add volumes
+    copy_tree('./core_engines/{0}/conf'.format(version), './wikis_data/{0}/conf'.format(doku_name))
+    copy_tree('./core_engines/{0}/data'.format(version), './wikis_data/{0}/data'.format(doku_name))
+    config['volumes'][doku_name] = './wikis_data/{0}'.format(doku_name)
+
     volumes = [
-        'engine1/inc:/inc:/opt/bitnami/dokuwiki/inc'.format(params.engine),
-        'engine1/lib:/bitnami/dokuwiki/lib'.format(params.engine),
-        '{0}/conf:/bitnami/dokuwiki/conf'.format(params.name),
-        '{0}/data:/bitnami/dokuwiki/data'.format(params.name),
+        '{0}/inc:/inc:/opt/bitnami/dokuwiki/inc'.format(version),
+        '{0}/lib:/bitnami/dokuwiki/lib'.format(version),
+        '{0}/conf:/bitnami/dokuwiki/conf'.format(doku_name),
+        '{0}/data:/bitnami/dokuwiki/data'.format(doku_name),
     ]
-    services[params.name]['volumes'] = volumes
+    services[doku_name]['volumes'] = volumes
 
     try:
         with open('docker-compose.yml', 'w') as config_file:
@@ -90,6 +109,7 @@ def dokuwiki_create(params):
         log.error("FileNotFoundError: ", e)
         raise
 
+
 # ----------------------------------------------- PARAMETERS -----------------------------------------------------------
 if __name__ == '__main__':
     # params to set in console script
@@ -97,7 +117,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--name', type=str, required=True,
                         help='Domain name of dokuwiki')
-    parser.add_argument('--engine', type=str, default=DEFAULT_ENGINE,
+    parser.add_argument('--engine', type=str, default=None,
                         help='Define engine to run dokuwiki, by default its newest.')
 
     params = parser.parse_args()
