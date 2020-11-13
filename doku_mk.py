@@ -1,3 +1,4 @@
+import os
 import argparse
 import yaml
 import logging
@@ -83,7 +84,7 @@ def dokuwiki_create(params):
     # add labels
     labels = [
         "traefik.enable=true",
-        "traefik.http.routers.{0}.rule=Host(`{0}.localhost)".format(doku_name),
+        "traefik.http.routers.{0}.rule=Host(`{0}.localhost`)".format(doku_name),
         "traefik.http.routers.{0}.entrypoints=web".format(doku_name),
     ]
     services[doku_name]['labels'] = labels
@@ -91,13 +92,12 @@ def dokuwiki_create(params):
     # add volumes
     copy_tree('./core_engines/{0}/conf'.format(version), './wikis_data/{0}/conf'.format(doku_name))
     copy_tree('./core_engines/{0}/data'.format(version), './wikis_data/{0}/data'.format(doku_name))
-    config['volumes'][doku_name] = './wikis_data/{0}'.format(doku_name)
 
     volumes = [
-        '{0}/inc:/inc:/opt/bitnami/dokuwiki/inc'.format(version),
-        '{0}/lib:/bitnami/dokuwiki/lib'.format(version),
-        '{0}/conf:/bitnami/dokuwiki/conf'.format(doku_name),
-        '{0}/data:/bitnami/dokuwiki/data'.format(doku_name),
+        f'./core_engines/{version}/inc:/opt/bitnami/dokuwiki/inc',
+        f'./core_engines/{version}/lib:/bitnami/dokuwiki/lib',
+        f'./wikis_data/{doku_name}/conf:/bitnami/dokuwiki/conf',
+        f'./wikis_data/{doku_name}/data:/bitnami/dokuwiki/data',
     ]
     services[doku_name]['volumes'] = volumes
 
@@ -108,6 +108,9 @@ def dokuwiki_create(params):
     except FileNotFoundError as e:
         log.error("FileNotFoundError: ", e)
         raise
+
+    # TODO: change to docker API
+    os.system(f'docker-compose up -d {doku_name}')
 
 
 # ----------------------------------------------- PARAMETERS -----------------------------------------------------------
