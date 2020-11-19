@@ -1,5 +1,5 @@
 import os
 
 
-def run(wiki_id):
+def start(wiki_id):
     os.system(f'docker-compose start {wiki_id}')

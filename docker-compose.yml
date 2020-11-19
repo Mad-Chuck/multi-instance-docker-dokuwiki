@@ -1,40 +1,15 @@
 services:
   test:
     container_name: test
-    image: bitnami/dokuwiki
+    build: .
     labels:
     - traefik.enable=true
     - traefik.http.routers.test.rule=Host(`test.localhost`)
     - traefik.http.routers.test.entrypoints=web
     volumes:
-    - ./core_engines/dokuwiki-2020-07-29/inc:/opt/bitnami/dokuwiki/inc
-    - ./core_engines/dokuwiki-2020-07-29/lib:/bitnami/dokuwiki/lib
-    - ./wikis_data/test/conf:/bitnami/dokuwiki/conf
-    - ./wikis_data/test/data:/bitnami/dokuwiki/data
-  test2:
-    container_name: test2
-    image: bitnami/dokuwiki
-    labels:
-    - traefik.enable=true
-    - traefik.http.routers.test2.rule=Host(`test2.localhost`)
-    - traefik.http.routers.test2.entrypoints=web
-    volumes:
-    - ./core_engines/dokuwiki-2020-07-29/inc:/opt/bitnami/dokuwiki/inc
-    - ./core_engines/dokuwiki-2020-07-29/lib:/bitnami/dokuwiki/lib
-    - ./wikis_data/test2/conf:/bitnami/dokuwiki/conf
-    - ./wikis_data/test2/data:/bitnami/dokuwiki/data
-  test3:
-    container_name: test3
-    image: bitnami/dokuwiki
-    labels:
-    - traefik.enable=true
-    - traefik.http.routers.test3.rule=Host(`test3.localhost`)
-    - traefik.http.routers.test3.entrypoints=web
-    volumes:
-    - ./core_engines/dokuwiki-2020-07-29/inc:/opt/bitnami/dokuwiki/inc
-    - ./core_engines/dokuwiki-2020-07-29/lib:/bitnami/dokuwiki/lib
-    - ./wikis_data/test3/conf:/bitnami/dokuwiki/conf
-    - ./wikis_data/test3/data:/bitnami/dokuwiki/data
+    - ./core_engines/dokuwiki-2020-07-29:/var/www/html:ro
+    - ./wikis_data/test/conf:/var/www/html/conf:rw
+    - ./wikis_data/test/data:/var/www/html/data:rw
   traefik:
     command:
     - --api.insecure=true
