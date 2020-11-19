@@ -1,49 +1,30 @@
 import os
 import argparse
 import yaml
-import logging
+from cmd_animal._logger import _create_logger
 from distutils.dir_util import copy_tree
 
 
-# ---------------------------------------- ADDITIONAL FUNCTIONS --------------------------------------------------------
-def create_logger(name):
+def create(name: str, engine: str):
     """
-    create logger fo script
-    :param name: name of logger
-    :return: logger
-    """
-    log_format = '%(asctime)s - %(name)s - %(levelname)s: %(message)s'
-    formatter = logging.Formatter(log_format)
+    copy default wiki and save it with given name.
+        Use default engine, if given engine does not exist.
 
-    ch = logging.StreamHandler()  # console handler
-    ch.setLevel(logging.INFO)
-    ch.setFormatter(formatter)
-
-    logger = logging.getLogger(name)
-    logger.setLevel('INFO')
-    logger.addHandler(ch)
-    return logger
-
-
-# ----------------------------------------------- MAIN BODY ------------------------------------------------------------
-def dokuwiki_create(params):
-    """
-    copy default wiki and save it on given name
-    use default engine, if other engine check if it exist
-
-    :param params:
-
+    :param name: service name
+    :param engine: engine version
     :return:
     """
-    log = create_logger('dokuwiki_create')
-    doku_name = params.name
-    version = params.engine
+
+    log = _create_logger('animal_create')
+    doku_name = name
+    version = engine
 
     # Read engine version
-    if version is None:
+    if version is None or version not in os.listdir('./core_engines'):
         try:
-            with open('../core_engines/default_version.yml', 'r') as version_file:
+            with open('./core_engines/default_version.yml', 'r') as version_file:
                 version = yaml.safe_load(version_file)['version']
+                log.info('engine argument incorrect, used default version')
             version_file.close()
         except FileNotFoundError as e:
             log.error('"./core_engines/default_version.yml" not found. FileNotFoundError: {0}'.format(e))
@@ -54,7 +35,7 @@ def dokuwiki_create(params):
 
     # Read docker compose
     try:
-        with open('../docker-compose.yml', 'r') as config_file:
+        with open('./docker-compose.yml', 'r') as config_file:
             config = yaml.safe_load(config_file)
         config_file.close()
     except FileNotFoundError as e:
@@ -101,25 +82,11 @@ def dokuwiki_create(params):
     services[doku_name]['volumes'] = volumes
 
     try:
-        with open('../docker-compose.yml', 'w') as config_file:
+        with open('./docker-compose.yml', 'w') as config_file:
             yaml.safe_dump(config, config_file, default_flow_style=False)
         config_file.close()
     except FileNotFoundError as e:
         log.error("FileNotFoundError: ", e)
         raise
 
-    os.system(f'docker-compose up -d {doku_name}')
-
-
-# ----------------------------------------------- PARAMETERS -----------------------------------------------------------
-if __name__ == '__main__':
-    # params to set in console script
-    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-    parser.add_argument('--name', type=str, required=True,
-                        help='Domain name of dokuwiki')
-    parser.add_argument('--engine', type=str, default=None,
-                        help='Define engine to run dokuwiki, by default its newest.')
-
-    params = parser.parse_args()
-    dokuwiki_create(params)
+    # os.system(f'docker-compose up -d {doku_name}')
