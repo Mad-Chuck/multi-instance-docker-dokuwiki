@@ -42,7 +42,7 @@ def dokuwiki_create(params):
     # Read engine version
     if version is None:
         try:
-            with open('./core_engines/default_version.yml', 'r') as version_file:
+            with open('../core_engines/default_version.yml', 'r') as version_file:
                 version = yaml.safe_load(version_file)['version']
             version_file.close()
         except FileNotFoundError as e:
@@ -54,7 +54,7 @@ def dokuwiki_create(params):
 
     # Read docker compose
     try:
-        with open('docker-compose.yml', 'r') as config_file:
+        with open('../docker-compose.yml', 'r') as config_file:
             config = yaml.safe_load(config_file)
         config_file.close()
     except FileNotFoundError as e:
@@ -101,7 +101,7 @@ def dokuwiki_create(params):
     services[doku_name]['volumes'] = volumes
 
     try:
-        with open('docker-compose.yml', 'w') as config_file:
+        with open('../docker-compose.yml', 'w') as config_file:
             yaml.safe_dump(config, config_file, default_flow_style=False)
         config_file.close()
     except FileNotFoundError as e:

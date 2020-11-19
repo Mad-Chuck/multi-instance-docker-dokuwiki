@@ -38,7 +38,7 @@ def dokuwiki_create(params):
 
     # Read docker compose
     try:
-        with open('docker-compose.yml', 'r') as config_file:
+        with open('../docker-compose.yml', 'r') as config_file:
             config = yaml.safe_load(config_file)
         config_file.close()
     except FileNotFoundError as e:
@@ -48,7 +48,7 @@ def dokuwiki_create(params):
     # Print all possible engines
     try:
         log.info('All engines:')
-        for dir in os.listdir('./core_engines'):
+        for dir in os.listdir('../core_engines'):
             if os.path.isdir(f'./core_engines/{dir}'):
                 log.info(f'- {dir}')
     except FileNotFoundError as e:
