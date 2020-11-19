@@ -78,7 +78,7 @@ def dokuwiki_create(params):
 
     # define new service
     services[doku_name] = {}
-    services[doku_name]['image'] = 'bitnami/dokuwiki'
+    services[doku_name]['image'] = 'php:7.2-apache'
     services[doku_name]['container_name'] = doku_name
 
     # add labels
@@ -94,10 +94,9 @@ def dokuwiki_create(params):
     copy_tree('./core_engines/{0}/data'.format(version), './wikis_data/{0}/data'.format(doku_name))
 
     volumes = [
-        f'./core_engines/{version}/inc:/opt/bitnami/dokuwiki/inc',
-        f'./core_engines/{version}/lib:/bitnami/dokuwiki/lib',
-        f'./wikis_data/{doku_name}/conf:/bitnami/dokuwiki/conf',
-        f'./wikis_data/{doku_name}/data:/bitnami/dokuwiki/data',
+        f'./core_engines/{version}/var/www/html:ro',
+        f'./wikis_data/{doku_name}/conf:/var/www/html/conf:rw',
+        f'./wikis_data/{doku_name}/data:/var/www/html/data:rw',
     ]
     services[doku_name]['volumes'] = volumes
 
@@ -109,7 +108,6 @@ def dokuwiki_create(params):
         log.error("FileNotFoundError: ", e)
         raise
 
-    # TODO: change to docker API
     os.system(f'docker-compose up -d {doku_name}')
 
 
