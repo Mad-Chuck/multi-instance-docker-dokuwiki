@@ -51,6 +51,5 @@ def remove(name: str):
         raise
     log.info(f'Service {name} removed from config file.')
 
-    shutil.rmtree(f'./wikis_data/{name}/conf')
-    shutil.rmtree(f'./wikis_data/{name}/data')
+    shutil.rmtree(f'./wikis_data/{name}')
     log.info(f'Removed {name} data.')
