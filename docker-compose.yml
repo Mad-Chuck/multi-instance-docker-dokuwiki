@@ -1,7 +1,7 @@
 services:
   test:
-    container_name: test
     build: .
+    container_name: test
     labels:
     - traefik.enable=true
     - traefik.http.routers.test.rule=Host(`test.localhost`)
