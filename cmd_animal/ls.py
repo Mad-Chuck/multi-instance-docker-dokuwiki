@@ -1,14 +1,15 @@
 import os
 import yaml
+import subprocess
 from cmd_animal._logger import _create_logger
 
 
 def ls():
     """
-    print all engine and service list
+    Print all engines and service list
     """
 
-    log = _create_logger('animal_print')
+    log = _create_logger('animal_ls')
 
     # Read docker compose
     try:
@@ -32,9 +33,12 @@ def ls():
     # Print  all services configuration
     try:
         services = config['services']
-        log.info('Services in use:')
+        log.info('Services defined:')
         for name, conf in services.items():
             log.info(f'- {name}')
     except KeyError as e:
         log.error('services not found in docker-compose.yml. KeyError: {0}'.format(e))
         raise
+
+    s = str(subprocess.check_output('docker-compose ps', shell=True), 'utf-8')
+    log.info(f'Running services: \n {s}')

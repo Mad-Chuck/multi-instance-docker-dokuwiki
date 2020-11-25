@@ -5,14 +5,12 @@ from cmd_animal._logger import _create_logger
 from distutils.dir_util import copy_tree
 
 
-def create(name: str, engine: str):
+def create(name: str, engine: str = 'default'):
     """
-    copy default wiki and save it with given name.
-        Use default engine, if given engine does not exist.
+    Create wiki with separated data, running on given engine.
 
-    :param name: service name
-    :param engine: engine version
-    :return:
+    :param name: service name to create
+    :param engine: if given engine does not exist - use default version.
     """
 
     log = _create_logger('animal_create')
@@ -20,11 +18,11 @@ def create(name: str, engine: str):
     version = engine
 
     # Read engine version
-    if version is None or version not in os.listdir('./core_engines'):
+    if version == 'default' or version not in os.listdir('./core_engines'):
         try:
             with open('./core_engines/default_version.yml', 'r') as version_file:
                 version = yaml.safe_load(version_file)['version']
-                log.info('engine argument incorrect, used default version')
+                log.info('Used default version engine')
             version_file.close()
         except FileNotFoundError as e:
             log.error('"./core_engines/default_version.yml" not found. FileNotFoundError: {0}'.format(e))
@@ -46,7 +44,7 @@ def create(name: str, engine: str):
     try:
         services = config['services']
         services_names = [name for name, conf in services.items()]
-        log.info('Read: {0} names'.format(services_names))
+        log.info(f'Read: {services_names} services')
     except KeyError as e:
         log.error('services not found in docker-compose.yml. KeyError: {0}'.format(e))
         raise
@@ -54,12 +52,12 @@ def create(name: str, engine: str):
     # Check is service name free to use
     if doku_name in services_names:
         log.error('Service with given name is already created. '
-                  'Change service name or use doku_update.py to modify given service')
-        raise
+                  'Change service name or use update to update given service')
+        exit(1)
 
     # define new service
     services[doku_name] = {}
-    services[doku_name]['image'] = 'php:7.2-apache'
+    services[doku_name]['build'] = '.'
     services[doku_name]['container_name'] = doku_name
 
     # add labels
@@ -71,8 +69,8 @@ def create(name: str, engine: str):
     services[doku_name]['labels'] = labels
 
     # add volumes
-    copy_tree('./core_engines/{0}/conf'.format(version), './wikis_data/{0}/conf'.format(doku_name))
-    copy_tree('./core_engines/{0}/data'.format(version), './wikis_data/{0}/data'.format(doku_name))
+    copy_tree(f'./core_engines/{version}/conf', f'./wikis_data/{doku_name}/conf')
+    copy_tree(f'./core_engines/{version}/data', f'./wikis_data/{doku_name}/data')
 
     volumes = [
         f'./core_engines/{version}/var/www/html:ro',
@@ -89,4 +87,4 @@ def create(name: str, engine: str):
         log.error("FileNotFoundError: ", e)
         raise
 
-    # os.system(f'docker-compose up -d {doku_name}')
+    log.info(f'Created {doku_name} service.')
