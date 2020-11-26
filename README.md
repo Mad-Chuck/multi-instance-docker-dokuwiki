@@ -67,8 +67,11 @@ It provides several command to manage:
       Update service to newest version
         --name
 
-## Security
-Dokuwiki's files are in core_engines folder and are mounted "as all" (with default data/conf folders as well).
+## Adding your own DokuWiki version
+To add your own DokuWiki version all you need to do is to download DokuWiki form [official download archive](https://download.dokuwiki.org/archive)
+
+## File access and permissions
+DokuWiki's files are in core_engines folder and are mounted "as all" (with default data/conf folders as well).
 To disable access to these files (default data/conf, core, plugins, templates etc.) engines volumes are linked in Read Only mode (:ro in the end of arg):
 ```
 volumes:
