@@ -46,12 +46,12 @@ def update(name: str):
         exit(1)
 
     # Check current version of engine
-    if services[name]['engine_version'] == version:
+    if services[name]['environment']['engine_version'] == version:
         log.info(f'Service is up to date.')
         exit(1)
 
-    log.info(f'Actual service version: { services[name]["engine_version"] }')
-    services[name]['engine_version'] = version
+    log.info(f'Actual service version: { services[name]["environment"]["engine_version"] }')
+    services[name]['environment']['engine_version'] = version
 
     volumes = [
         f'./core_engines/{version}/var/www/html:ro',

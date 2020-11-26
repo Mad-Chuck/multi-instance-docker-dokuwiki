@@ -58,7 +58,8 @@ def create(name: str, engine: str = 'default'):
     services[doku_name] = {}
     services[doku_name]['build'] = '.'
     services[doku_name]['container_name'] = doku_name
-    services[doku_name]['engine_version'] = version
+    services[doku_name]['environment'] = {}
+    services[doku_name]['environment']['engine_version'] = version
 
     # add labels
     labels = [
