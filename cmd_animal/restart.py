@@ -3,7 +3,7 @@ import os
 
 def restart(name: str):
     """
-    Reboot service
+    Reboot service: Work in progress (currently not working as you may want it to)
 
     :param name: service name to restart
     """

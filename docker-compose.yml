@@ -1,8 +1,22 @@
 services:
+  dokuanimal:
+    build: .
+    container_name: dokuanimal
+    environment:
+      engine_version: dokuwiki-2020-07-29
+    labels:
+    - traefik.enable=true
+    - traefik.http.routers.dokuanimal.rule=Host(`dokuanimal.localhost`)
+    - traefik.http.routers.dokuanimal.entrypoints=web
+    volumes:
+    - ./core_engines/dokuwiki-2020-07-29:/var/www/html:ro
+    - ./wikis_data/dokuanimal/conf:/var/www/html/conf:rw
+    - ./wikis_data/dokuanimal/data:/var/www/html/data:rw
   test:
     build: .
     container_name: test
-    engine_version: dokuwiki-2020-07-29
+    environment:
+      engine_version: dokuwiki-2020-07-29
     labels:
     - traefik.enable=true
     - traefik.http.routers.test.rule=Host(`test.localhost`)

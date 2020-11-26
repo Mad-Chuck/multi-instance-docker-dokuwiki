@@ -50,7 +50,7 @@ def update(name: str):
         log.info(f'Service is up to date.')
         exit(1)
 
-    log.info(f'Actual service version: { services[name]["environment"]["engine_version"] }')
+    log.info(f'Current service version: { services[name]["environment"]["engine_version"] }')
     services[name]['environment']['engine_version'] = version
 
     volumes = [

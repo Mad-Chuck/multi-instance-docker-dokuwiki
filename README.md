@@ -2,10 +2,10 @@
 Multi-instance webservice that allows users to create their own instances of DokuWiki on Docker.
 
 ## Table of contents
-* [Directory structure](#directory_structure)
-* [Running](#running)
-* [Adding DokuWiki version](#adding_dokuwiki_version)
-* [File access and permissions](#file_access_and_permissions)
+* [Directory structure](#directory-structure)
+* [Setting up](#setting-up)
+* [Adding DokuWiki version](#adding-dokuwiki-version)
+* [File access and permissions](#file-access-and-permissions)
 
 ## Directory structure
     .
@@ -19,12 +19,33 @@ Multi-instance webservice that allows users to create their own instances of Dok
     ├── Dockerfile - docker image 
     └── README.md
 
-## Running 
+## Setting up 
 
-todo: how to start traefik
+In docker-compose.yml file we should have following traefik configuration:
+
+```yaml
+services:
+  traefik:
+    command:
+    - --api.insecure=true
+    - --providers.docker=true
+    - --providers.docker.exposedbydefault=false
+    - --entrypoints.web.address=:80
+    container_name: traefik
+    image: traefik:v2.3
+    ports:
+    - 80:80
+    - 8080:8080
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+version: '3.3'
+
+```
+
+We then can run the farm with following command:
 
 ```shell script
-todo...
+docker-compose up -d
 ```
 
 To manage dokuwiki dockers use animal.py CLI:
@@ -62,11 +83,6 @@ It provides several command to manage:
      
      run
       Start running service
-        --name
-            service name
-        
-     start
-      Start service from stop status
         --name
             service name
         
