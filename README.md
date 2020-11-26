@@ -6,6 +6,7 @@ Multi-instance webservice that allows users to create their own instances of Dok
 ├── animal.py - CLI to python scripts <br>
 ├── /cmd_animal - python scripts to manage dokuwiki dockers <br>
 ├── /core_engines - dir with dokuwiki core files<br>
+    ├── default_version.yml - file with default DokuWiki version for newly added instances<br>
 ├── /wikis_data - dir with dokuwiki instances data <br>
 ├── docker-compose.yml - config file <br>
 ├── Dockerfile - docker image <br>
@@ -68,7 +69,43 @@ It provides several command to manage:
         --name
 
 ## Adding your own DokuWiki version
-To add your own DokuWiki version all you need to do is to download DokuWiki form [official download archive](https://download.dokuwiki.org/archive)
+To add your own DokuWiki version all you need to do is to download DokuWiki form [official download archive](https://download.dokuwiki.org/archive).<br>
+Remember to always keep default version directory name in default_version.yml file.
+```yaml
+version: dokuwiki-2020-07-29
+```
+
+When done properly core_engines structure should look like this (2 DokuWiki versions, default version listed in default_version.yml file)
+/core_engines<br>
+├── /dokuwiki-2018-04-22c<br>
+    ├── /bin<br>
+    ├── /conf<br>
+    ├── /data<br>
+    ├── /inc<br>
+    ├── /lib<br>
+    ├── /vendor<br>
+    ├── .htaccess.dist<br>
+    ├── COPYING<br>
+    ├── doku.php<br>
+    ├── feed.php<br>
+    ├── install.php<br>
+    ├── README<br>
+    ├── VERSION<br>
+├── /dokuwiki-2020-07-29<br>
+    ├── /bin<br>
+    ├── /conf<br>
+    ├── /data<br>
+    ├── /inc<br>
+    ├── /lib<br>
+    ├── /vendor<br>
+    ├── .htaccess.dist<br>
+    ├── COPYING<br>
+    ├── doku.php<br>
+    ├── feed.php<br>
+    ├── install.php<br>
+    ├── README<br>
+    ├── VERSION<br>
+├── default_version.yml
 
 ## File access and permissions
 DokuWiki's files are in core_engines folder and are mounted "as all" (with default data/conf folders as well).
