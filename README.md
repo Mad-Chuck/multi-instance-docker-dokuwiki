@@ -68,15 +68,14 @@ It provides several command to manage:
         --name
 
 ## Security
-To disable access to dokuwiki core files, plugins and templates, 
-engines volumes are linked in Read Only mode (:ro in the end of arg):
+Dokuwiki's files are in core_engines folder and are mounted "as all" (with default data/conf folders as well).
+To disable access to these files (default data/conf, core, plugins, templates etc.) engines volumes are linked in Read Only mode (:ro in the end of arg):
 ```
 volumes:
 - ./core_engines/dokuwiki-2020-07-29:/var/www/html:ro
 ```
 
-To enable access to dokuwiki data and configuration, data and configuartion dirs 
-are linked in Read Write mode (:rw in the end of arg):
+We then mount instance's own conf/data folders to rewrite currently mounted default data/conf. To enable access to these folders (data and conf only), we mount them in Read Write mode (:rw in the end of arg):
 ```
 volumes:
 - ./wikis_data/test/conf:/var/www/html/conf:rw
