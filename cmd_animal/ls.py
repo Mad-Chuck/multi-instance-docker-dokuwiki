@@ -41,4 +41,4 @@ def ls():
         raise
 
     s = str(subprocess.check_output('docker-compose ps', shell=True), 'utf-8')
-    log.info(f'Running services: \n {s}')
+    log.info(f'Services: \n {s}')

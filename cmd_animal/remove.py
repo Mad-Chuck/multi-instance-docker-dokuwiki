@@ -12,8 +12,8 @@ def remove(name: str):
     """
     log = _create_logger('animal_remove')
 
-    s = str(subprocess.check_output('docker-compose ps', shell=True), 'utf-8').split()
-    if name == 'traefik' or name in s:
+    s = str(subprocess.check_output(f'docker-compose ps {name}', shell=True), 'utf-8').split()
+    if name == 'traefik' or (name in s and 'Up' in s):
         log.error('Cannot remove running service. Try to stop it first.')
         exit(1)
 
