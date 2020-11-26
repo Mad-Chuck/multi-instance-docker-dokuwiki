@@ -54,7 +54,7 @@ def update(name: str):
     services[name]['environment']['engine_version'] = version
 
     volumes = [
-        f'./core_engines/{version}/var/www/html:ro',
+        f'./core_engines/{version}:/var/www/html:ro',
         f'./wikis_data/{name}/conf:/var/www/html/conf:rw',
         f'./wikis_data/{name}/data:/var/www/html/data:rw',
     ]

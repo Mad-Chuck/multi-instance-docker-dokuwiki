@@ -74,7 +74,7 @@ def create(name: str, engine: str = 'default'):
     copy_tree(f'./core_engines/{version}/data', f'./wikis_data/{doku_name}/data')
 
     volumes = [
-        f'./core_engines/{version}/var/www/html:ro',
+        f'./core_engines/{version}:/var/www/html:ro',
         f'./wikis_data/{doku_name}/conf:/var/www/html/conf:rw',
         f'./wikis_data/{doku_name}/data:/var/www/html/data:rw',
     ]
