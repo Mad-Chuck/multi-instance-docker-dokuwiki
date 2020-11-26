@@ -1,5 +1,10 @@
 import os
 
 
-def stop(wiki_id):
-    os.system(f'docker-compose stop {wiki_id}')
+def stop(name: str):
+    """
+    Stop service
+
+    :param name: service name
+    """
+    os.system(f'docker-compose stop {name}')

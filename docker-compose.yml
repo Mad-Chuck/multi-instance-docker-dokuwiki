@@ -2,6 +2,7 @@ services:
   test:
     build: .
     container_name: test
+    engine_version: dokuwiki-2020-07-29
     labels:
     - traefik.enable=true
     - traefik.http.routers.test.rule=Host(`test.localhost`)

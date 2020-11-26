@@ -1,5 +1,4 @@
 import os
-import argparse
 import yaml
 from cmd_animal._logger import _create_logger
 from distutils.dir_util import copy_tree
@@ -44,7 +43,7 @@ def create(name: str, engine: str = 'default'):
     try:
         services = config['services']
         services_names = [name for name, conf in services.items()]
-        log.info(f'Read: {services_names} services')
+        log.info(f'Services in config: {services_names}')
     except KeyError as e:
         log.error('services not found in docker-compose.yml. KeyError: {0}'.format(e))
         raise
@@ -59,6 +58,7 @@ def create(name: str, engine: str = 'default'):
     services[doku_name] = {}
     services[doku_name]['build'] = '.'
     services[doku_name]['container_name'] = doku_name
+    services[doku_name]['engine_version'] = version
 
     # add labels
     labels = [
